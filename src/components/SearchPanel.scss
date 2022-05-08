@@ -1,0 +1,24 @@
+.search-panel {
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    gap: 2vh;
+    align-self: flex-start;
+    flex-grow: 1;
+}
+
+.search-panel label, .search-input {
+    font-size: 2.5vw;
+}
+
+.search-input {
+    outline: none;
+    border-radius: 10vh;
+    box-sizing: content-box;
+    padding: 2vh 1vw;
+    transition: .3s;
+}
+
+.search-input:hover {
+    transform: scale(1.02);
+}
