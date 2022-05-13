@@ -1,0 +1,25 @@
+.search-btn {
+    min-width: min-content;
+    max-width: 100%;
+    will-change: transform;
+    border-radius: 10vh;
+    box-sizing: content-box;
+    padding: 2vh 4vh;
+    font-size: 2em;
+    transition: .3s;
+    background: rgba(0, 0, 0, 0.662);
+    color: rgb(253, 232, 255);
+    border: 2px solid rgb(253, 232, 255);
+}
+
+.search-btn:hover {
+    transform: scale(115%);
+    transition: .3s;
+}
+
+
+@media (max-width: 500px) {
+    .search-btn {
+        font-size: 1.5em;
+    }
+}
