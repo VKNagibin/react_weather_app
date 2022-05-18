@@ -1,8 +1,9 @@
 const axios = require('axios').default;
 
+/*getData is a function which sends the request with city name string and gets lat and lon values*/ 
 async function getData(context, city) {
     if (city) {
-        const request = await axios({
+        let response = await axios({
             url: "http://api.openweathermap.org/geo/1.0/direct",
             params : {
                 q: city,
@@ -11,57 +12,89 @@ async function getData(context, city) {
             }
         }).catch( error => error);
     
-        if (String(request.data) === '') {
+        response = response.data;
+
+        if (String(response) === '') {
             return (
                 context.setState({ isFound: false, city: null, weather: null})
                 );
         }
         
         const coordinates = {
-            lon: request.data[0].lon,
-            lat: request.data[0].lat,
+            lon: response[0].lon,
+            lat: response[0].lat,
         }
     
         context.setState({ 
             city: {
-                name: request.data[0].name,
-                country: request.data[0].country,
+                name: response[0].name,
+                country: response[0].country,
             } });
         
         getWeather(context, coordinates);
     }
 }
+/*getData END*/ 
 
 
+
+
+/*getWeather gets lat and lon values and returns weather parameters in component state*/ 
 async function getWeather(context, cityInfo) {
-    const request = await axios({
+    let response = await axios({
         url: "https://api.openweathermap.org/data/2.5/weather",
         params : {
+            units: 'metric',
             lat: cityInfo.lat,
             lon: cityInfo.lon,
             appid: "bca9817a7a8b7f90baec13868acec94e",
         }
     });
 
-    const response = request.data;
+    response  = response.data;
 
     context.setState({ 
         weather: {
-            temp: celcius(response.main.temp),
-            temp_max: celcius(response.main.temp_max),
-            temp_min: celcius(response.main.temp_min),
+            temp: response.main.temp,
+            temp_max: response.main.temp_max,
+            temp_min: response.main.temp_min,
             wind_direction: windDirection(response.wind.deg),
             wind_speed: Math.trunc(response.wind.speed),
             weather_pattern: response.weather[0].main,
         },
-        info: request.data,
+        info: response,
     });
+
+    getBackground(context, response.name);
 }       
+/*getWeather END*/ 
 
-function celcius(kelvin) {
-    return Math.trunc(kelvin - 273.15);
+
+/*getBackground takes valid city name from getWeather function and sets app background */ 
+async function getBackground(context, city) {
+    let response = await axios({
+        url: "https://api.unsplash.com/search/photos/",
+        params: {
+            query: `${city}-city`,
+            order_by: 'relevant',
+            page: 10,
+            per_page: 30,
+            content_filter: 'high',
+            client_id: "rD95J_hp9inTtquBQorZ3pBUTlDbXGkgXv5hdxJuN90",
+        }
+    });
+
+    console.log(response.data);
+    let background = response.data.results;
+    background = background[getRandom(background.length - 1)].urls.regular;
+    context.setState({ background: setBackground(background)});
 }
+/*getBackground END*/ 
 
+
+
+
+/*Set wind direction */ 
 function windDirection(degrees) {
     switch(true) {
         case ( ( degrees >= 0 && degrees <= 30 ) || (degrees >= 330 && degrees <= 360) ) :
@@ -84,7 +117,12 @@ function windDirection(degrees) {
             return 'No data';
     }
 }
+/*windDirection END*/ 
 
+
+
+
+/*Returns suitable date and time values*/ 
 function dateParser(date) {
     let currentDate;
     let time;
@@ -98,7 +136,12 @@ function dateParser(date) {
 
     return {currentDate, time}
 }
+/*dateParser END*/ 
 
+
+
+
+/*Forbids entering useless simbols END*/ 
 function validCity(city) {
     let newString = city;
     newString = newString.replace(/[^A-ZА-Я\s-]/gi, '');
@@ -107,19 +150,33 @@ function validCity(city) {
     newString.trim();
     return newString;
 }
+/*validCity END*/ 
 
-function weatherImagesFunc(arr, weather) {
+
+
+
+/*Сhooses image for weather character */ 
+function weatherImagesFunc(arr, weather, default_) {
     let result = arr.find(item => {    
         return item.name === weather.toLowerCase();
     });
 
-    if (result.name && result.name === 'clear') {
+    if( result === undefined) {
+        return default_.content;
+    }
+
+    if( result.name === 'clear' ) {
         return result.content[isNight()];
     }
 
     return result.content;
 }
+/*weatherImagesFunc END*/ 
 
+
+
+
+/* is it Day or Night now? */ 
 function isNight() {
     const hour = new Date().getHours();
     if ( (hour >= 21 && hour <= 23) || (hour >= 0 && hour <= 4)) {
@@ -127,7 +184,12 @@ function isNight() {
     }
         return 0;
 }
+/*isNight END*/ 
 
+
+
+
+/*Сustomizable random function */ 
 function getRandom(rightConstraint = 1, leftConstraint = 0,  isInteger = true) {
     const random = Math.random() * rightConstraint + leftConstraint;
     if ( isInteger ) {
@@ -136,5 +198,21 @@ function getRandom(rightConstraint = 1, leftConstraint = 0,  isInteger = true) {
 
     return random;
 }
+/*getRandom END*/ 
 
-export {getData, dateParser, weatherImagesFunc, validCity, isNight, getRandom};
+
+
+
+/*Returns styles for background*/ 
+function setBackground(image) {
+    return ({
+      'backgroundImage' : `url('${image}')`,
+      "backgroundPosition" : "center",
+      "backgroundSize" : "cover",
+    })   
+  }
+/*setBackground END*/ 
+
+
+
+export {getData, dateParser, weatherImagesFunc, validCity, isNight, getRandom, setBackground};

@@ -3,7 +3,7 @@ import "./CityName.scss";
 
 export default function CityName(props) {
     return(
-        <section className="selected-city medium-font">
+        <section className={`city-name ${props.className}`}>
             { props.content }
         </section>
     )

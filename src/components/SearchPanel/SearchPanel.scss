@@ -11,24 +11,16 @@
     width: 50%;
     will-change: transform;
     border-radius: 10vh;
-    background: rgba(0, 0, 0, 0.662);
     border: 1px solid rgb(253, 232, 255) !important;
     color: rgb(253, 232, 255);
     box-sizing: content-box;
     padding: .5em 2em;
     transition: .3s;
-    font-size: 2em;
+    font-size: 2rem;
 }
 
 .search-input:hover {
     transform: scale(1.02);
     transition: .3s;
     
-}
-
-
-@media (max-width: 500px) {
-    .search-input{
-        font-size: 1.5em;
-    }
 }

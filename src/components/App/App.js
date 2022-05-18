@@ -1,6 +1,6 @@
 import React from 'react';
 import "./App.scss";
-import {getData, dateParser, weatherImagesFunc, validCity, isNight, getRandom} from "../../helpers";
+import {getData, dateParser, weatherImagesFunc, validCity, setBackground} from "../../helpers";
 import CityName from '../CityName/CityName';
 import DateArea from '../DateArea/DateArea';
 import Temperature from '../Temperature/Temperature';
@@ -9,16 +9,20 @@ import WeatherPattern from '../WeatherPattern/WeatherPattern';
 import SearchPanel from '../SearchPanel/SearchPanel';
 import celsius from '../../assets/images/celcius.svg';
 import weatherIconsArray from '../../weatherIconsArray.js';
-import {backgroundsArray, setBackground} from '../../backgrounds';
+import defaultBackground from '../../assets/images/backgroundImages/darkTheme/dark3.jpg';
 
-let background = getRandom(3);
 let timerID = null;
 
 class App extends React.Component {
     constructor(props) {
         super(props);
         
-        this.state = { input: "" , date: new Date(), isFound: true};
+        this.state = { 
+            input: "" , 
+            date: new Date(), 
+            isFound: true, 
+            background: setBackground(defaultBackground),
+        };
 
         this.handleInput = this.handleInput.bind(this);
         this.handleSend = this.handleSend.bind(this);
@@ -41,24 +45,25 @@ class App extends React.Component {
                 getData(this, this.state.input);
                 this.setState({ date: new Date() });
             }
-            , 60000);
+            , 30000);
         }
 
-
-      
+        
+        
     } 
 
     render() {
         return (
-            <div className="app-wrapper" 
-                 style={setBackground(backgroundsArray[isNight()].content[background].content)} onKeyDown={ this.handleSend }>
+            <div className="app-wrapper" onKeyDown={ this.handleSend } style={ this.state.background}>
 
                 <SearchPanel value={ this.state.input } 
                              inputHandler={ this.handleInput } 
-                             click={ this.handleSend }/>
+                             click={ this.handleSend }
+                             className={'bg'}
+                             />
                              
                 { this.state.city ? 
-                        <CityName content={ `${this.state.city.name}, ${this.state.city.country }`} />
+                        <CityName content={ `${this.state.city.name}, ${this.state.city.country }`} className={'medium-font bg'} />
                         :
                         this.state.isFound ? null
                         :
@@ -67,7 +72,7 @@ class App extends React.Component {
                 }
 
 
-                <section className="main-section">
+                <section className="main-section bg">
 
                     { this.state.weather ?     
 
@@ -88,7 +93,7 @@ class App extends React.Component {
 
                         <WeatherPattern className={['weather-pattern medium-font']} 
                                         pattern={ this.state.weather.weather_pattern }
-                                        src={ weatherImagesFunc(weatherIconsArray, this.state.weather.weather_pattern)} 
+                                        src={ weatherImagesFunc(weatherIconsArray, this.state.weather.weather_pattern, weatherIconsArray[0])} 
                                         alt={ this.state.weather.weather_pattern } />
                                
                     </div>
@@ -102,8 +107,7 @@ class App extends React.Component {
                                             content={ `Min ${ this.state.weather.temp_min }` } 
                                             alt={"C*"} />
 
-                            <Temperature    containerClassName={ 'max-temperature small-font' }
-                                            contentClassName={ 'max-temperature__content' }
+                            <Temperature    containerClassName={ 'small-font' }
                                             imageClassName={ 'celcius-img max-temp-img' }
                                             image={ celsius }
                                             content={ `Max ${ this.state.weather.temp_max }` } 

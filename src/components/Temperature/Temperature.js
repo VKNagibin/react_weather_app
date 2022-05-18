@@ -3,8 +3,8 @@ import "./Temperature.scss";
 
 export default function Temperature(props) {
     return(
-        <div className={ props.containerClassName }>
-            <h3 className={ props.contentClassName }> 
+        <div className={ `max-temperature ${props.containerClassName}` }>
+            <h3 className={'max-temperature__content'}> 
                 { props.content }
                 <img className={ props.imageClassName } src={props.image} alt={ props.alt }/>
             </h3>
