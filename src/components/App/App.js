@@ -9,7 +9,7 @@ import WeatherPattern from '../WeatherPattern/WeatherPattern';
 import SearchPanel from '../SearchPanel/SearchPanel';
 import celsius from '../../assets/images/celcius.svg';
 import weatherIconsArray from '../../weatherIconsArray.js';
-import defaultBackground from '../../assets/images/backgroundImages/darkTheme/dark3.jpg';
+import defaultBackground from '../../assets/images/defaultBg.jpg';
 
 let timerID = null;
 
@@ -67,7 +67,7 @@ class App extends React.Component {
                         :
                         this.state.isFound ? null
                         :
-                        <CityName content={ `Sorry, your city not found :(` } />
+                        <CityName content={ `Sorry, your city not found :(` } className={'medium-font bg'} />
                     
                 }
 

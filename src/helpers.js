@@ -75,16 +75,18 @@ async function getBackground(context, city) {
     let response = await axios({
         url: "https://api.unsplash.com/search/photos/",
         params: {
-            query: `${city}-city`,
-            order_by: 'relevant',
-            page: 10,
+            query: `${city}`,
             per_page: 30,
+            order_by: 'relevant',
             content_filter: 'high',
             client_id: "rD95J_hp9inTtquBQorZ3pBUTlDbXGkgXv5hdxJuN90",
-        }
+        },
     });
 
-    console.log(response.data);
+    if (response.data.results.length === 0) {
+        return
+    }
+
     let background = response.data.results;
     background = background[getRandom(background.length - 1)].urls.regular;
     context.setState({ background: setBackground(background)});
