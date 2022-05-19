@@ -70,6 +70,8 @@ async function getWeather(context, cityInfo) {
 /*getWeather END*/ 
 
 
+
+
 /*getBackground takes valid city name from getWeather function and sets app background */ 
 async function getBackground(context, city) {
     let response = await axios({
